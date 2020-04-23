@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>pixi-svg</title>
+    
+    <meta name="description" content="SVG to Graphics DisplayObject for PIXI" />
+    
+        <meta name="keywords" content="PixiJS, Rendering, Graphics, SVG, Vector" />
+        <meta name="keyword" content="PixiJS, Rendering, Graphics, SVG, Vector" />
+    
+    
+    
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link href="https://fonts.googleapis.com/css?family=Libre+Franklin:400,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/main.css">
+
+    
+    <script>
+    var config = {"monospaceLinks":false,"cleverLinks":false,"applicationName":"pixi-svg","meta":{"title":"pixi-svg","description":"SVG to Graphics DisplayObject for PIXI","keyword":"PixiJS, Rendering, Graphics, SVG, Vector"},"linenums":true,"default":{"outputSourceFiles":true}};
+    </script>
+    
+
+    
+</head>
+<body>
+<div id="wrap" class="clearfix">
+    
+<div class="navigation">
+    <h3 class="applicationName"><a href="index.html">pixi-svg</a></h3>
+    <button id="menuToggle" class="btn btn-link btn-lg menu-toggle">
+        <span class="glyphicon glyphicon-menu-hamburger"></span>
+    </button>
+    <div class="search">
+        <input id="search" type="text" class="form-control input-md" placeholder="Search...">
+    </div>
+    <ul class="list">
+    
+    
+        <li class="item" data-name="global">
+            <span class="title namespace ">
+                
+                <span class="namespaceTag">
+                    <span class="glyphicon glyphicon-globe"></span>
+                </span>
+                
+                
+                    <a href="global.html">Global</a>
+                
+            </span>
+            
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li class="parent " data-name="re"><a href="global.html#re">re</a></li>
+            
+            </ul>
+            
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            
+            <ul class="methods itemMembers">
+            
+            </ul>
+            
+            <ul class="events itemMembers">
+            
+            </ul>
+            
+        </li>
+    
+        <li class="item" data-name="PIXI.SVG">
+            <span class="title  ">
+                
+                
+                    <a href="PIXI.SVG.html">PIXI.SVG</a>
+                
+            </span>
+            
+            <ul class="members itemMembers">
+            
+            </ul>
+            
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            
+            <ul class="methods itemMembers">
+            
+            </ul>
+            
+            <ul class="events itemMembers">
+            
+            </ul>
+            
+        </li>
+    
+    </ul>
+</div>
+
+    <div class="main">
+        <h1 class="page-title" data-filename="index.html">Index</h1>
+        
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article class="readme content-size"><h1>pixi-svg</h1>
+<p>SVG to Graphics DisplayObject for pixi.js.</p>
+<p><a target="_blank" href="https://github.com/bigtimebuddy/pixi-svg/actions?query=workflow%3A%22Node.js+CI%22"><img src="https://github.com/bigtimebuddy/pixi-svg/workflows/Node.js%20CI/badge.svg" alt="Node.js CI"></a></p>
+<h2>Examples</h2>
+<p>See SVG and pixi.js side-by-side comparisons:
+https://bigtimebuddy.github.io/pixi-svg/example/</p>
+<h2>Install</h2>
+<pre class="prettyprint source lang-bash"><code>npm install pixi-svg --save
+</code></pre>
+<h2>Usage</h2>
+<p>For an inline SVG element:</p>
+<pre class="prettyprint source lang-html"><code>&lt;svg id=&quot;svg1&quot; viewBox=&quot;0 0 100 100&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;>
+  &lt;circle r=&quot;50&quot; cx=&quot;50&quot; cy=&quot;50&quot; fill=&quot;#F00&quot; />
+&lt;/svg>
+</code></pre>
+<p>Create a new <code>PIXI.SVG</code> object, provide the <code>&lt;svg&gt;</code> element.</p>
+<pre class="prettyprint source lang-js"><code>const svg = new PIXI.SVG(document.getElementById(&quot;svg1&quot;));
+const app = new PIXI.Application();
+app.stage.addChild(svg);
+</code></pre>
+<h2>Supported Features</h2>
+<p>Only supports a subset of SVG's feature. Current this includes:</p>
+<ul>
+<li>SVG Elements:
+<ul>
+<li><code>&lt;path&gt;</code></li>
+<li><code>&lt;circle&gt;</code></li>
+<li><code>&lt;rect&gt;</code></li>
+<li><code>&lt;polygon&gt;</code></li>
+<li><code>&lt;polyline&gt;</code></li>
+<li><code>&lt;g&gt;</code></li>
+</ul>
+</li>
+<li><code>style</code> attributes with the following properties:
+<ul>
+<li><code>stroke</code></li>
+<li><code>stroke-width</code></li>
+<li><code>fill</code></li>
+<li><code>opacity</code></li>
+<li><code>stroke-linejoin</code></li>
+<li><code>stroke-linecap</code></li>
+</ul>
+</li>
+</ul>
+<h2>Unsupported Features</h2>
+<ul>
+<li>Basically, anything not listed above</li>
+<li>Interactivity</li>
+<li>Any <code>transform</code> attributes</li>
+<li><code>&lt;style&gt;</code> elements are ignored</li>
+<li><code>&lt;path&gt;</code> elements which use arcs to draw (<code>a</code> or <code>A</code> drawing command)</li>
+<li><code>&lt;text&gt;</code> elements are ignored</li>
+<li>Gradients or images</li>
+<li>The following attributes are also ignored:
+<ul>
+<li><code>fill-rule</code></li>
+</ul>
+</li>
+</ul>
+<h2>License</h2>
+<p>MIT License.</p></article>
+    </section>
+
+
+
+
+
+
+        
+
+        <footer class="content-size">
+            <div class="footer">
+                Documentation generated by <a target="_blank" href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> on Thu Apr 23 2020 12:58:32 GMT-0700 (Pacific Daylight Time)
+            </div>
+        </footer>
+    </div>
+</div>
+<script>prettyPrint();</script>
+<script src="scripts/main.js"></script>
+
+
+</body>
+</html>
