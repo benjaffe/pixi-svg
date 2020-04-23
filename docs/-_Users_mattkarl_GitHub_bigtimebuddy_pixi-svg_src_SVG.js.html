@@ -93,7 +93,8 @@
         </header>
         <article>
             <pre id="source-code" class="prettyprint source linenums"><code>import { Graphics } from '@pixi/graphics';
-import { dPathParser } from './dPathParser';
+import dPathParser from 'd-path-parser';
+import color from 'tinycolor2';
 
 /**
  * Scalable Graphics drawn from SVG image document.
@@ -128,34 +129,32 @@ class SVG extends Graphics
             switch (child.nodeName.toLowerCase())
             {
                 case 'path': {
-                    this.svgPath(child);
+                    this._svgPath(child);
                     break;
                 }
                 case 'circle':
                 case 'ellipse': {
-                    this.svgCircle(child);
+                    this._svgCircle(child);
                     break;
                 }
                 case 'rect': {
-                    this.svgRect(child);
+                    this._svgRect(child);
                     break;
                 }
                 case 'polygon': {
-                    this.svgPoly(child, true);
+                    this._svgPoly(child, true);
                     break;
                 }
                 case 'polyline': {
-                    this.svgPoly(child);
+                    this._svgPoly(child);
                     break;
                 }
                 case 'g': {
                     break;
                 }
                 default: {
-                    // @if DEBUG
                     // eslint-disable-next-line no-console
                     console.info(`[PIXI.SVG] &lt;${child.nodeName}> elements unsupported`);
-                    // @endif
                     break;
                 }
             }
@@ -184,16 +183,9 @@ class SVG extends Graphics
             return parseInt(hex, 16);
         }
 
-        const measureColor = SVG.measureColor;
+        const { r, g, b } = color(hex).toRgb();
 
-        measureColor.style.color = hex;
-        const rgb = window.getComputedStyle(document.body.appendChild(measureColor)).color
-            .match(/\d+/g)
-            .map((a) => parseInt(a, 10));
-
-        document.body.removeChild(measureColor);
-
-        return (rgb[0] &lt;&lt; 16) + (rgb[1] &lt;&lt; 8) + rgb[2];
+        return (r &lt;&lt; 16) + (g &lt;&lt; 8) + b;
     }
 
     /**
@@ -202,7 +194,7 @@ class SVG extends Graphics
      * @method
      * @param {SVGCircleElement} node
      */
-    svgCircle(node)
+    _svgCircle(node)
     {
         let heightProp = 'r';
         let widthProp = 'r';
@@ -244,7 +236,7 @@ class SVG extends Graphics
      * @method
      * @param {SVGRectElement} node
      */
-    svgRect(node)
+    _svgRect(node)
     {
         const x = parseFloat(node.getAttribute('x'));
         const y = parseFloat(node.getAttribute('y'));
@@ -254,22 +246,11 @@ class SVG extends Graphics
 
         if (rx)
         {
-            this.drawRoundedRect(
-                x,
-                y,
-                width,
-                height,
-                rx,
-            );
+            this.drawRoundedRect(x, y, width, height, rx);
         }
         else
         {
-            this.drawRect(
-                x,
-                y,
-                width,
-                height,
-            );
+            this.drawRect(x, y, width, height);
         }
     }
 
@@ -280,7 +261,7 @@ class SVG extends Graphics
      * @param {SVGElement} node
      * @return {Object} Style attributes
      */
-    svgStyle(node)
+    _svgStyle(node)
     {
         const style = node.getAttribute('style');
         const result = {
@@ -288,6 +269,9 @@ class SVG extends Graphics
             opacity: node.getAttribute('opacity'),
             stroke: node.getAttribute('stroke'),
             strokeWidth: node.getAttribute('stroke-width'),
+            cap: node.getAttribute('stroke-linecap'),
+            join: node.getAttribute('stroke-linejoin'),
+            miterLimit: node.getAttribute('stroke-miterlimit'),
         };
 
         if (style !== null)
@@ -317,7 +301,7 @@ class SVG extends Graphics
      * @method
      * @param {SVGPolylineElement} node
      */
-    svgPoly(node, close)
+    _svgPoly(node, close)
     {
         const points = node.getAttribute('points')
             .split(/[ ,]/g)
@@ -340,7 +324,7 @@ class SVG extends Graphics
      */
     _svgFill(node, inherit)
     {
-        const { fill, opacity, stroke, strokeWidth } = this.svgStyle(node);
+        const { fill, opacity, stroke, strokeWidth, cap, join, miterLimit } = this._svgStyle(node);
         const defaultLineWidth = stroke !== null ? 1 : 0;
         const lineWidth = strokeWidth !== null ? parseFloat(strokeWidth) : defaultLineWidth;
         const lineColor = stroke !== null ? this._hexToUint(stroke) : this.lineColor;
@@ -363,28 +347,20 @@ class SVG extends Graphics
         {
             this.beginFill(0);
         }
-        this.lineStyle(
-            lineWidth,
-            lineColor,
-        );
 
-        // @if DEBUG
-        if (node.getAttribute('stroke-linejoin'))
-        {
-            // eslint-disable-next-line no-console
-            console.info('[PIXI.SVG] "stroke-linejoin" attribute is not supported');
-        }
-        if (node.getAttribute('stroke-linecap'))
-        {
-            // eslint-disable-next-line no-console
-            console.info('[PIXI.SVG] "stroke-linecap" attribute is not supported');
-        }
+        this.lineStyle({
+            width: stroke === null &amp;&amp; strokeWidth === null &amp;&amp; inherit ? this.line.width : lineWidth,
+            color: stroke === null &amp;&amp; inherit ? this.line.color : lineColor,
+            cap: cap === null &amp;&amp; inherit ? this.line.cap : cap,
+            join: join === null &amp;&amp; inherit ? this.line.join : join,
+            miterLimit: miterLimit === null &amp;&amp; inherit ? this.line.miterLimit : parseFloat(miterLimit),
+        });
+
         if (node.getAttribute('fill-rule'))
         {
             // eslint-disable-next-line no-console
             console.info('[PIXI.SVG] "fill-rule" attribute is not supported');
         }
-        // @endif
     }
 
     /**
@@ -392,7 +368,7 @@ class SVG extends Graphics
      * @method
      * @param {SVGPathElement} node
      */
-    svgPath(node)
+    _svgPath(node)
     {
         const d = node.getAttribute('d');
         let x; let
@@ -502,10 +478,8 @@ class SVG extends Graphics
                     break;
                 }
                 default: {
-                    // @if DEBUG
                     // eslint-disable-next-line no-console
                     console.info('[PIXI.SVG] Draw command not supported:', command.code, command);
-                    // @endif
                     break;
                 }
             }
@@ -513,15 +487,7 @@ class SVG extends Graphics
     }
 }
 
-/**
- * &lt;div> element to measure string colors like "black"
- * and convert to hex colors
- * @private
- */
-SVG.measureColor = document.createElement('div');
-
 export { SVG };
-
 </code></pre>
         </article>
     </section>
@@ -535,7 +501,7 @@ export { SVG };
 
         <footer class="content-size">
             <div class="footer">
-                Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> on Thu Apr 23 2020 11:23:29 GMT-0700 (Pacific Daylight Time)
+                Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> on Thu Apr 23 2020 13:25:22 GMT-0700 (Pacific Daylight Time)
             </div>
         </footer>
     </div>
